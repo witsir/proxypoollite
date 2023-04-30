@@ -22,16 +22,15 @@ def run_task(job, is_enable, cycle):
     if not is_enable:
         logger.warning(f'{job.__class__.__name__} not enabled, exit')
         return
-    if cycle:
-        if not ENABLE_SERVER:
-            loop = 0
-            while True:
-                logger.debug(f'{job.__class__.__name__} loop {loop} start...')
-                asyncio.run(job())
-                loop += 1
-                time.sleep(cycle)
-        else:
+    if job.__class__.__name__ == 'Server':
+        job()
+    else:
+        loop = 0
+        while True:
+            logger.debug(f'{job.__class__.__name__} loop {loop} start...')
             asyncio.run(job())
+            loop += 1
+            time.sleep(cycle)
 
 
 class Scheduler:
@@ -81,9 +80,11 @@ class Scheduler:
             _ = [p.join() for p in processes]
         except KeyboardInterrupt as e:
             logger.info(f'received keyboard interrupt signal {e}')
+            self.ctx_config.to_json()
             _ = [p.terminate() for p in processes]
         except Exception as e:
             logger.exception(e)
+            self.ctx_config.to_json()
             self.manager.shutdown()
         finally:
             # must call join method before calling is_alive

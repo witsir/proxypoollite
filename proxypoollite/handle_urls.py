@@ -166,7 +166,6 @@ async def process_url_click_1(url, pattern, ctx_config: ContextConfig):
     if content:
         try:
             suffix_urls = re.findall(r'(?<=href=\")(/dayProxy/ip/\d{4}\.html)(?=\"[\D,\s]*?阅读全文)', content)[:4]
-            pprint(suffix_urls)
             await _get_url_then_proxies_from_click_url(url, suffix_urls, pattern, ctx_config)
         except Exception as e:
             logger.exception(f'should get urls and proxies in {url}, but some errors happen. {e}')

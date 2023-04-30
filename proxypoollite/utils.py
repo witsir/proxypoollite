@@ -39,6 +39,7 @@ class ContextConfig(metaclass=SingletonMeta):
         self.proxy_data_file = None
         self.proxy_dict = proxy_dict
         self.lock = lock
+        self.has_to_json = False
 
     def to_proxy_dict(self):
         """
@@ -53,12 +54,15 @@ class ContextConfig(metaclass=SingletonMeta):
                     self.proxy_dict[key].extend(value)
                 logger.info(f'load proxy_dict from {self.proxy_data_file}')
         except Exception as e:
-            logger.warning(f'load proxy_dict failed,because\n{e}')
+            logger.warning(f'load proxy_dict failed,because {e}')
 
     def to_json(self):
         """
         dump proxy_dict to json file
         """
+        if self.has_to_json:
+            logger.info('proxy_dict has already been dumped to json file')
+            return
         try:
             if not os.path.exists(self.data_dir):
                 os.makedirs(self.data_dir)
@@ -67,9 +71,10 @@ class ContextConfig(metaclass=SingletonMeta):
                 for key, value in self.proxy_dict.items():
                     dict_copy[key] = list(value)
                 json.dump(dict_copy, f)
+                self.has_to_json = True
                 logger.info(f'dump proxy_dict to {self.proxy_data_file}')
         except Exception as e:
-            logger.warning(f'dump proxy_dict failed, because\n{e}')
+            logger.warning(f'dump proxy_dict failed, because {e}')
 
 
 def get_domain_from_url(url):
@@ -102,8 +107,8 @@ def retry(max_retries=3, delay=3, is_limit=True):
         async def wrapper(*args, **kwargs):
             if is_limit:
                 domain = get_domain_from_url(args[0])
-                if domain in history and time.time() - history[domain] < 3.1:
-                    await asyncio.sleep(3)
+                if domain in history and time.time() - history[domain] < 10.1:
+                    await asyncio.sleep(10)
                     history[domain] = time.time()
                 history[domain] = time.time()
             retries = 0
@@ -133,7 +138,7 @@ def update_dict(ctx_config: ContextConfig, score, list_):
         ctx_config.proxy_dict[score].extend(list_)
         logger.info(f'update {len(list_)} proxies to {score} in manager.dict')
     except Exception as e:
-        logger.exception(f'update dict failed,because\n{e}')
+        logger.exception(f'update dict failed,because {e}')
 
 
 def add_dict(dict_: dict, score: str, proxy: str):
@@ -159,7 +164,7 @@ _context.check_hostname = False
 _context.verify_mode = ssl.CERT_NONE
 
 
-@retry(max_retries=3, delay=2)
+@retry(max_retries=3, delay=5)
 async def fetch_resp(url, usr_agent):
     """
     get html entities from url
@@ -177,10 +182,10 @@ async def fetch_resp(url, usr_agent):
         resp = response.read().decode('utf-8', errors='ignore')
         return resp
     except (HTTPError, TimeoutError, URLError) as e:
-        logger.warning(f'get response from {url} failed, because \n{e}')
+        logger.warning(f'get response from {url} failed, because {e}')
         return None
     except Exception as e:
-        logger.exception(f'get response from {url} failed, because\n{e}')
+        logger.exception(f'get response from {url} failed, because {e}')
         return None
 
 
@@ -211,7 +216,7 @@ async def test_proxy(proxy: (str, str), usr_agent: str, protocol: str = 'https')
         logger.info(f'{proxy_ip}:{proxy_port} test with {TEST_URL}  response {response.code}')
         return True if response.code in TEST_VALID_STATUS else False
     except Exception as e:
-        logger.warning(f'test proxy {proxy} failed, failed because\n{e}')
+        logger.warning(f'test proxy {proxy} failed, failed because {e}')
         return False
 
 

@@ -1,14 +1,10 @@
 import asyncio
-import itertools
 from asyncio import CancelledError
-from os.path import join, dirname
-from pprint import pprint
 
+from handle_log import get_logger
 from init_urls import init_urls
 from settings import ENABLE_GETTER
 from utils import ContextConfig, SingletonMeta
-
-from handle_log import get_logger
 
 logger = get_logger('getter')
 
@@ -37,6 +33,6 @@ class Getter(metaclass=SingletonMeta):
             except (CancelledError, KeyboardInterrupt) as e:
                 with self.ctx_config.lock:
                     self.ctx_config.to_json()
-                logger.warning('getter is interrupted {e}')
+                logger.warning(f'getter is interrupted {e}')
         else:
             logger.info('getter is disabled')

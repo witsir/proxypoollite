@@ -20,6 +20,7 @@ LOG_DIR = join(ROOT_DIR, '../logs')
 
 # definition of environments
 DEV_MODE, TEST_MODE, PROD_MODE = 'dev', 'test', 'prod'
+# default APP_ENV
 APP_ENV = DEV_MODE.lower()
 APP_DEBUG = True if APP_ENV == DEV_MODE else False
 APP_DEV = IS_DEV = APP_ENV == DEV_MODE
@@ -36,7 +37,7 @@ PROXY_NUMBER_MAX = 3000
 PROXY_NUMBER_MIN = 0
 
 # definition of tester cycle, it will test every CYCLE_TESTER second
-CYCLE_TESTER = 60 * 3
+CYCLE_TESTER = 60 * 5
 # definition of getter cycle, it will get proxy every CYCLE_GETTER second
 CYCLE_GETTER = 60 * 60 * 2
 GET_TIMEOUT = 15
@@ -102,7 +103,7 @@ def _merger():
                 elif type(_env_vars[key][0]) == float:
                     globals()[key] = [float(i) for i in re.split(r'\s*[;,\s]\s*', _config_d[key])]
             else:
-                continue
+                globals()[key] = _config_d[key]
         except Exception as e:
             logger.error(f'{e}, {key} parse failed, you should check the the type in a list located in the '
                          f'pk_config.ini file')

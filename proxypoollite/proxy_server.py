@@ -2,11 +2,12 @@ import random
 import socketserver
 from wsgiref.simple_server import WSGIServer, WSGIRequestHandler
 
-from handle_log import get_logger
+from handle_log import get_logger, LOG_FORMAT_LITE
 from settings import PROXY_SCORE_MAX, API_PORT, API_HOST, ENABLE_SERVER
 from utils import ContextConfig, SingletonMeta
 
 logger = get_logger(__name__)
+logger_lite = get_logger("info", format_str=LOG_FORMAT_LITE,  level="INFO")
 
 
 class WSGIHandler(WSGIRequestHandler):
@@ -32,15 +33,18 @@ class Server(metaclass=SingletonMeta):
 
     def resp_random(self):
         try:
-            return random.choice(self.ctx_config.proxy_dict[str(PROXY_SCORE_MAX)])
+            proxy = random.choice(self.ctx_config.proxy_dict[str(PROXY_SCORE_MAX)])
+            return proxy.split()[0]
         except Exception as e:
             logger.warning(e)
             return 'wait'
 
-    def reps_count(self):
+    def reps_sum(self):
+        count = sum(len(self.ctx_config.proxy_dict[score]) for score in self.ctx_config.proxy_dict)
+        return count
 
-        count = sum(len(self.ctx_config.proxy_dict[score]) for score in self.ctx_config.proxy_dict if
-                    self.ctx_config.proxy_dict[score])
+    def reps_count(self):
+        count = len(self.ctx_config.proxy_dict[str(PROXY_SCORE_MAX)])
         return count
 
     def application(self, environ, start_response):
@@ -53,6 +57,8 @@ class Server(metaclass=SingletonMeta):
                 response_body = bytes(random_proxy, encoding='utf-8')
             else:
                 response_body = b''
+        elif path == 'sum':
+            response_body = bytes(str(self.reps_sum()), encoding='utf-8')
         elif path == 'count':
             response_body = bytes(str(self.reps_count()), encoding='utf-8')
         else:
@@ -68,7 +74,10 @@ class Server(metaclass=SingletonMeta):
         if ENABLE_SERVER:
             server = ThreadedWSGIServer((API_HOST, self.port), WSGIHandler)
             server.set_app(self.application)
-            logger.info('server started at http://%s:%s' % ('127.0.0.1', self.port))
-            server.serve_forever()
+            logger_lite.info('server started at http://%s:%s' % ('127.0.0.1', self.port))
+            try:
+                server.serve_forever()
+            except KeyboardInterrupt:
+                logger.warning('server stopped by user')
         else:
             logger.info('server not enabled, only can get random proxy from instance in local machine')

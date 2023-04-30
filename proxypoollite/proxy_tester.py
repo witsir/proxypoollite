@@ -22,10 +22,28 @@ class Tester(metaclass=SingletonMeta):
                 with self.ctx_config.lock:
                     test_list = self.ctx_config.proxy_dict[score][:]
                     self.ctx_config.proxy_dict[score][:] = []
-                tasks = [asyncio.create_task(self.is_proxy_anonymous_and_https(score, proxy)) for proxy in
-                         test_list]
+                test_list = set(test_list)
+                logger.info(f'start test score: {score} proxies length: {len(test_list)}')
+                tasks = [asyncio.create_task(self.is_proxy_anonymous_and_https(score, proxy)) for proxy in test_list]
                 await asyncio.gather(*tasks)
-                logger.info(f'a bunch of proxies whose score is {score} has been tested')
+                logger.info(f'length {len(test_list)} proxies whose score is {score} has been tested')
+
+                # ↓↓↓↓↓test for split validation, not work well #
+                # test_list = list(set(test_list))
+                # logger.info(f'start test score: {score} proxies length: {len(test_list)}')
+                #
+                # batch, rear = divmod(len(test_list), TEST_BATCH)
+                # if batch:
+                #     for i in range(batch):
+                #         tasks = [asyncio.create_task(self.is_proxy_anonymous_and_https(score, proxy)) for proxy in
+                #                  test_list[(i * TEST_BATCH):((i+1) * TEST_BATCH)]]
+                #         await asyncio.gather(*tasks)
+                #         logger.info(f'{batch} of proxies whose score is {score} has been tested')
+                # tasks = [asyncio.create_task(self.is_proxy_anonymous_and_https(score, proxy)) for proxy in
+                #          test_list[batch * TEST_BATCH:]]
+                # await asyncio.gather(*tasks)
+                # logger.info(f'{rear} proxies whose score is {score} has been tested')
+                # ↑↑↑↑↑ test for split validation, not work well #
 
     async def is_proxy_anonymous_and_https(self, score, proxy: str):
         """

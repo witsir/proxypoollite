@@ -12,11 +12,12 @@ LOG_FORMAT = '%(levelname)s - %(asctime)s - pid:%(process)d|tid:%(thread)d - %(n
 LOG_FORMAT_LITE = '%(message)s'
 
 
-def get_logger(name=None, format_str=LOG_FORMAT):
+def get_logger(name=None, format_str=LOG_FORMAT, level=LOG_LEVEL):
     """
     get logger by name
-    :param format_str:
     :param name: name of logger
+    :param format_str:
+    :param level:
     :return: logger
     """
     global loggers
@@ -28,12 +29,12 @@ def get_logger(name=None, format_str=LOG_FORMAT):
         return loggers.get(name)
 
     logger = logging.getLogger(name)
-    logger.setLevel(LOG_LEVEL)
+    logger.setLevel(level)
 
     # 输出到控制台
     if ENABLE_LOG and ENABLE_LOG_CONSOLE:
         stream_handler = logging.StreamHandler(sys.stdout)
-        stream_handler.setLevel(level=LOG_LEVEL)
+        stream_handler.setLevel(level=level)
         formatter = logging.Formatter(format_str)
         stream_handler.setFormatter(formatter)
         logger.addHandler(stream_handler)
