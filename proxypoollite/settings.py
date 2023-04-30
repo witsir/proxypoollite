@@ -4,13 +4,13 @@ import re
 from os.path import dirname, abspath, join
 import configparser
 from logging import Logger
-from pprint import pprint
 
 logger = Logger(__name__)
 
 _config_ = configparser.ConfigParser()
-
-_config_.read(join(dirname(__file__), '../pk_config.ini'))
+_pk_config_path = join(dirname(__file__), '../pk_config.ini')
+if os.path.exists(_pk_config_path):
+    _config_.read(_pk_config_path)
 # definition of flags
 IS_WINDOWS = platform.system().lower() == 'windows'
 
@@ -22,10 +22,6 @@ LOG_DIR = join(ROOT_DIR, '../logs')
 DEV_MODE, TEST_MODE, PROD_MODE = 'dev', 'test', 'prod'
 # default APP_ENV
 APP_ENV = DEV_MODE.lower()
-APP_DEBUG = True if APP_ENV == DEV_MODE else False
-APP_DEV = IS_DEV = APP_ENV == DEV_MODE
-APP_PROD = IS_PROD = APP_ENV == PROD_MODE
-APP_TEST = IS_TEST = APP_ENV == TEST_MODE
 
 # definition of proxy scores
 PROXY_SCORE_MAX = 50
@@ -72,11 +68,6 @@ _LOG_LEVEL_MAP = {
     PROD_MODE: "ERROR"
 }
 
-# log level
-LOG_LEVEL = _LOG_LEVEL_MAP.get(APP_ENV, 'DEBUG')
-LOG_ROTATION = True
-LOG_RETENTION = True
-
 
 def _merger():
     """
@@ -109,4 +100,15 @@ def _merger():
                          f'pk_config.ini file')
 
 
-_merger()
+if os.path.exists(_pk_config_path):
+    _merger()
+
+APP_DEBUG = True if APP_ENV == DEV_MODE else False
+APP_DEV = IS_DEV = APP_ENV == DEV_MODE
+APP_PROD = IS_PROD = APP_ENV == PROD_MODE
+APP_TEST = IS_TEST = APP_ENV == TEST_MODE
+
+# log level
+LOG_LEVEL = _LOG_LEVEL_MAP.get(APP_ENV, 'DEBUG')
+LOG_ROTATION = True
+LOG_RETENTION = True

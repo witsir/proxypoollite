@@ -1,10 +1,10 @@
 import asyncio
 from asyncio import CancelledError
 
-from handle_log import get_logger
-from init_urls import init_urls
-from settings import ENABLE_GETTER
-from utils import ContextConfig, SingletonMeta
+from proxypoollite.handle_log import get_logger
+from proxypoollite.init_urls import init_urls
+from proxypoollite.settings import ENABLE_GETTER
+from proxypoollite.utils import ContextConfig, SingletonMeta
 
 logger = get_logger('getter')
 

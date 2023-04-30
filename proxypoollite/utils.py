@@ -13,8 +13,8 @@ import urllib.request
 from functools import wraps
 from urllib.error import HTTPError, URLError
 
-from handle_log import get_logger
-from settings import GET_TIMEOUT, ROOT_DIR, TEST_URL, TEST_VALID_STATUS, PROXY_SCORE_INIT, PROXY_SCORE_MAX, \
+from proxypoollite.handle_log import get_logger
+from proxypoollite.settings import GET_TIMEOUT, ROOT_DIR, TEST_URL, TEST_VALID_STATUS, PROXY_SCORE_INIT, PROXY_SCORE_MAX, \
     PROXY_SCORE_MIN
 
 logger = get_logger('utils')
@@ -82,7 +82,7 @@ def get_domain_from_url(url):
     get domain name from url, domain name then would be used in proxy attribute
     to indicate which website the proxy is from
     """
-    pattern = re.compile(r'^(?:https?://)(?:www\.)?([^/]+)(?:\.com|\.cn|\.net|\.org|\.run)\D*')
+    pattern = re.compile(r'^(?:https?://)(?:www\.)?([^/]+)(?:\.com|\.cn|\.net|\.org|\.co|\.is|\.run)\D*')
     if domain_name_match := pattern.match(url):
         domain_name = domain_name_match.group(1)
         return domain_name

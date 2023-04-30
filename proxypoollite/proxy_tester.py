@@ -1,9 +1,9 @@
 import asyncio
 from asyncio import CancelledError
 
-from handle_log import get_logger
-from settings import PROXY_SCORE_MAX, PROXY_SCORE_MIN, TEST_BATCH, ENABLE_TESTER
-from utils import ContextConfig, test_proxy, update_dict, add_dict, SingletonMeta, get_uer_agent, scores_list
+from proxypoollite.handle_log import get_logger
+from proxypoollite.settings import PROXY_SCORE_MAX, PROXY_SCORE_MIN, TEST_BATCH, ENABLE_TESTER
+from proxypoollite.utils import ContextConfig, test_proxy, update_dict, add_dict, SingletonMeta, get_uer_agent, scores_list
 
 logger = get_logger('tester')
 

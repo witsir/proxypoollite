@@ -3,7 +3,7 @@ import shutil
 import sys
 from os import mkdir
 from os.path import join, exists
-from settings import LOG_LEVEL, ENABLE_LOG_FILE, ENABLE_LOG_RUNTIME_FILE, LOG_DIR, ENABLE_LOG_ERROR_FILE, \
+from proxypoollite.settings import LOG_LEVEL, ENABLE_LOG_FILE, ENABLE_LOG_RUNTIME_FILE, LOG_DIR, ENABLE_LOG_ERROR_FILE, \
     ENABLE_LOG, ENABLE_LOG_CONSOLE
 
 loggers = {}

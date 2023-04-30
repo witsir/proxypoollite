@@ -1,10 +1,10 @@
 import re
 
-from handle_urls import (process_url_text,
-                         process_url_click_1,
-                         process_url_json,
-                         process_url_json_text,
-                         process_url_json_sage,)
+from proxypoollite.handle_urls import (process_url_text,
+                                       process_url_click_1,
+                                       process_url_json,
+                                       process_url_json_text,
+                                       process_url_json_sage, )
 
 # the init_urls is a dict, the key is the url to be crawled, the value is a tuple,
 # the first element is a crawl function, the second element is a pattern for generating the next url

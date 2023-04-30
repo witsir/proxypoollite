@@ -1,8 +1,8 @@
-import asyncio
-
-from handle_log import get_logger
-from scheduler import Scheduler, run_task
 import argparse
+from proxypoollite import settings
+
+from proxypoollite.handle_log import get_logger
+from proxypoollite.scheduler import Scheduler, run_task
 
 logger = get_logger('run')
 parser = argparse.ArgumentParser(description='ProxyPool')
@@ -11,9 +11,29 @@ parser.add_argument('-p', '--processor',
                     help='processor to run',
                     action='store',
                     choices=['getter', 'tester', 'server'])
+parser.add_argument('-dev', '--development',
+                    help='development mode',
+                    action='store_true')
+
+
 args = parser.parse_args()
 
-if __name__ == '__main__':
+
+def change_dev():
+    """
+    change to development mode
+    """
+    settings.APP_ENV = 'dev'
+    settings.APP_DEBUG = True
+    settings.APP_DEV = settings.IS_DEV = True
+    settings.APP_PROD = settings.IS_PROD = False
+    settings.APP_TEST = settings.IS_TEST = False
+    settings.LOG_LEVEL = "DEBUG"
+
+
+def main():
+    if args.development:
+        change_dev()
     sh = Scheduler()
     if args.processor == 'getter':
         try:
@@ -34,3 +54,7 @@ if __name__ == '__main__':
             logger.warning('received keyboard interrupt signal')
     else:
         sh.start()
+
+
+if __name__ == '__main__':
+    main()
