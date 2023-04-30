@@ -1,0 +1,17 @@
+[project]
+name = "proxypoollite"
+authors = [
+    {name = "WitSir", email = "yudsometimes@gmail.com"},
+]
+version = "0.1.0"
+description = "A simple proxy pool"
+readme = "README.md"
+requires-python = ">=3.8"
+keywords = ["proxy", "proxy_pool", "proxypoollite"]
+
+[project.scripts]
+proxypoollite = "proxypoollite.__main__:main"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"

@@ -2,12 +2,12 @@ import asyncio
 import multiprocessing
 import time
 
-from handle_log import get_logger
-from proxy_getter import Getter
-from proxy_server import Server
-from proxy_tester import Tester
-from settings import CYCLE_GETTER, CYCLE_TESTER, ENABLE_SERVER, ENABLE_GETTER, ENABLE_TESTER, IS_WINDOWS
-from utils import ContextConfig, scores_list
+from proxypoollite.handle_log import get_logger
+from proxypoollite.proxy_getter import Getter
+from proxypoollite.proxy_server import Server
+from proxypoollite.proxy_tester import Tester
+from proxypoollite.settings import CYCLE_GETTER, CYCLE_TESTER, ENABLE_SERVER, ENABLE_GETTER, ENABLE_TESTER, IS_WINDOWS
+from proxypoollite.utils import ContextConfig, scores_list
 
 logger = get_logger('Scheduler')
 
@@ -94,8 +94,3 @@ class Scheduler:
             logger.info(f'server is {"alive" if p_server.is_alive() else "dead"}')
             logger.info('proxy terminated')
             self.manager.shutdown()
-
-
-if __name__ == '__main__':
-    sh = Scheduler()
-    sh.start()

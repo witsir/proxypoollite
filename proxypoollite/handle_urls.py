@@ -1,10 +1,9 @@
 import asyncio
 import json
 import re
-from pprint import pprint
 
-from handle_log import get_logger, LOG_FORMAT_LITE
-from utils import fetch_resp, update_dict, ContextConfig, get_domain_from_url, get_uer_agent
+from proxypoollite.handle_log import get_logger, LOG_FORMAT_LITE
+from proxypoollite.utils import fetch_resp, update_dict, ContextConfig, get_domain_from_url, get_uer_agent
 
 logger = get_logger('getter')
 logger_lite = get_logger('getter', LOG_FORMAT_LITE)
@@ -165,7 +164,7 @@ async def process_url_click_1(url, pattern, ctx_config: ContextConfig):
     content = await fetch_resp(url, get_uer_agent())
     if content:
         try:
-            suffix_urls = re.findall(r'(?<=href=\")(/dayProxy/ip/\d{4}\.html)(?=\"[\D,\s]*?阅读全文)', content)[:4]
+            suffix_urls = re.findall(r'(?<=href=\")(/dayProxy/ip/\d{4}\.html)(?=\"[\D,\s]*?阅读全文)', content)[:5]
             await _get_url_then_proxies_from_click_url(url, suffix_urls, pattern, ctx_config)
         except Exception as e:
             logger.exception(f'should get urls and proxies in {url}, but some errors happen. {e}')

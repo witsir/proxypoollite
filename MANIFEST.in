@@ -1,0 +1,2 @@
+include proxypoollite/user_agents.in
+global-exclude *.pyc

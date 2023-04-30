@@ -2,9 +2,9 @@ import random
 import socketserver
 from wsgiref.simple_server import WSGIServer, WSGIRequestHandler
 
-from handle_log import get_logger, LOG_FORMAT_LITE
-from settings import PROXY_SCORE_MAX, API_PORT, API_HOST, ENABLE_SERVER
-from utils import ContextConfig, SingletonMeta
+from proxypoollite.handle_log import get_logger, LOG_FORMAT_LITE
+from proxypoollite.settings import PROXY_SCORE_MAX, API_PORT, API_HOST, ENABLE_SERVER
+from proxypoollite.utils import ContextConfig, SingletonMeta
 
 logger = get_logger(__name__)
 logger_lite = get_logger("info", format_str=LOG_FORMAT_LITE,  level="INFO")
@@ -40,7 +40,8 @@ class Server(metaclass=SingletonMeta):
             return 'wait'
 
     def reps_sum(self):
-        count = sum(len(self.ctx_config.proxy_dict[score]) for score in self.ctx_config.proxy_dict)
+        with self.ctx_config.lock:
+            count = sum(len(self.ctx_config.proxy_dict[score]) for score in self.ctx_config.proxy_dict)
         return count
 
     def reps_count(self):
